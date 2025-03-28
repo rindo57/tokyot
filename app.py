@@ -32,7 +32,52 @@ def str_to_b64(__str: str) -> str:
     bytes_b64 = standard_b64encode(str_bytes)
     b64 = bytes_b64.decode('ascii')
     return b64
-    
+
+
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+def extract_episode_links(url):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+        print(f"Failed to fetch page: {response.status_code}")
+        return []
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    anime_data = []
+
+    for td in soup.find_all("div", class_=["episode c_h2", "episode c_h2b"]):
+        a_tag = td.find("a", href=True)
+        if a_tag and a_tag.text.strip():  # Ensure title is not empty
+            title = a_tag.text.strip()
+            if title.startswith("upload"):
+                pass
+            else:
+            # Check for episode subtitle in the i tag
+                i_tag = td.find("i")
+                if i_tag:
+                    subtitle = i_tag.text.strip()
+                    if subtitle.startswith(":"):
+                        subtitle = subtitle[1:].strip()
+                    title = f"{title} - {subtitle}"
+                full_url = urljoin(url, a_tag["href"])
+                anime_data.append((title, full_url))
+
+    return anime_data
+
+if __name__ == "__main__":
+    search_url = "https://www.tokyoinsider.com/anime/O/One_piece_(TV)/"
+    result_links = extract_main_links(search_url)
+
+    print("\nExtracted Anime Titles & Links:")
+    for title, link in result_links:
+        print(f"{title}: {link}")
+
+
 def extract_main_links(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -81,12 +126,44 @@ def create_pagination_buttons(results, current_page):
 
 @app.on_message(filters.command("start"))
 async def start(client: Client, message: Message):
-    await message.reply_text(
-        "👋 <b>Hello!</b> I'm an anime search bot.\n\n"
-        "Just send me the name of an anime you're looking for, "
-        "and I'll search for it on Tokyo Insider!",
-        parse_mode=enums.ParseMode.HTML
-    )
+    query = message.text.split(" ", 1)[-1]
+    if message == "/start":
+        await message.reply_text(
+            "👋 <b>Hello!</b> I'm an anime search bot.\n\n"
+            "Just send me the name of an anime you're looking for, "
+            "and I'll search for it on Tokyo Insider!",
+            parse_mode=enums.ParseMode.HTML
+        )
+    else:
+        equery = b64_to_str(query)
+        print(equery)
+        ep_url = "https://tokyoinsider.com/anime/"+equery
+        try:
+            results = extract_episode_links(ep_url)
+            if not results:
+                return await message.reply_text("No results.")
+        
+        # Store results in user_data for pagination
+            user_data[message.from_user.id] = {
+                "results": results,
+                "current_page": 0
+            }
+        
+        # Create and send first page of results
+            message_text, _ = create_results_message(results)
+            reply_markup = create_pagination_buttons(results, 0)
+        
+            await message.reply_text(
+                message_text,
+                reply_markup=reply_markup,
+                disable_web_page_preview=True,
+                parse_mode=enums.ParseMode.HTML
+            )
+        
+        except Exception as e:
+            print(f"Error: {e}")
+            await message.reply_text("An error occurred while fetchong data. Please try again later.")
+        
 
 @app.on_message(filters.text & ~filters.command("start"))
 async def search_anime(client: Client, message: Message):
@@ -97,6 +174,7 @@ async def search_anime(client: Client, message: Message):
     # Create search URL
     search_term = quote(query.replace(" ", "_").lower())
     search_url = f"https://www.tokyoinsider.com/anime/search?k={search_term}"
+    
     
     try:
         results = extract_main_links(search_url)
