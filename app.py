@@ -42,13 +42,12 @@ def extract_main_links(url):
     return anime_data
 
 def create_results_message(results, start_idx=0):
-    message_text = "**Search Results:**\n\n"
+    message_text = "<b>Search Results:</b>\n\n"
     end_idx = min(start_idx + 5, len(results))
     
     for i in range(start_idx, end_idx):
         title, url = results[i]
-        url+=")"
-        message_text += f"{i+1}. [{title}]({url})\n"
+        message_text += f"{i+1}. <a href='{url}'>{title}</a>\n"
     
     return message_text, end_idx
 
@@ -67,9 +66,10 @@ def create_pagination_buttons(results, current_page):
 @app.on_message(filters.command("start"))
 async def start(client: Client, message: Message):
     await message.reply_text(
-        "👋 Hello! I'm an anime search bot.\n\n"
+        "👋 <b>Hello!</b> I'm an anime search bot.\n\n"
         "Just send me the name of an anime you're looking for, "
-        "and I'll search for it on Tokyo Insider!"
+        "and I'll search for it on Tokyo Insider!",
+        parse_mode="HTML"
     )
 
 @app.on_message(filters.text & ~filters.command("start"))
@@ -100,7 +100,8 @@ async def search_anime(client: Client, message: Message):
         await message.reply_text(
             message_text,
             reply_markup=reply_markup,
-            disable_web_page_preview=True
+            disable_web_page_preview=True,
+            parse_mode="HTML"
         )
         
     except Exception as e:
@@ -137,7 +138,8 @@ async def handle_pagination(client: Client, callback_query: CallbackQuery):
     await callback_query.message.edit_text(
         message_text,
         reply_markup=reply_markup,
-        disable_web_page_preview=True
+        disable_web_page_preview=True,
+        parse_mode="HTML"
     )
     
     await callback_query.answer()
