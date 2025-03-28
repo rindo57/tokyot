@@ -153,7 +153,7 @@ async def start(client: Client, message: Message):
         )
     else:
         #equery = b64_to_str(query)
-        print(equery)
+      #  print(equery)
         ep_url = "https://tokyoinsider.com/anime/"+equery
         try:
             results = extract_episode_links(ep_url)
