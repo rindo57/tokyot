@@ -102,6 +102,18 @@ def create_results_message(results, start_idx=0):
     
     return message_text, end_idx
 
+def create_ep_results_message(results, start_idx=0):
+    message_text = "<b>Search Results:</b>\n\n"
+    end_idx = min(start_idx + 25, len(results))
+    
+    for i in range(start_idx, end_idx):
+        title, url = results[i]
+        url = url.replace("https://www.tokyoinsider.com/anime/", "")
+        nurl = url.replace("/", "&").replace(":", "#").replace("(TV)", "TV").replace(".", "##").replace(",", "&&").replace("!", "=")
+        xurl = "https://t.me/animeddlbot?start="+nurl
+        message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
+    
+    return message_text, end_idx
 def create_pagination_buttons(results, current_page):
     keyboard = []
     total_pages = (len(results) + 4) // 5  # Calculate total pages (ceil division)
@@ -140,7 +152,7 @@ async def start(client: Client, message: Message):
             }
         
         # Create and send first page of results
-            message_text, _ = create_results_message(results)
+            message_text, _ = create_ep_results_message(results)
             reply_markup = create_pagination_buttons(results, 0)
         
             await message.reply_text(
