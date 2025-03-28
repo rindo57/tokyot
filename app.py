@@ -91,7 +91,7 @@ def extract_main_links(url):
 
 def create_results_message(results, start_idx=0):
     message_text = "<b>Search Results:</b>\n\n"
-    end_idx = min(start_idx + 5, len(results))
+    end_idx = min(start_idx + 25, len(results))
     
     for i in range(start_idx, end_idx):
         title, url = results[i]
