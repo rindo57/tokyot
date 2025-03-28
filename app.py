@@ -126,7 +126,7 @@ def create_pagination_buttons(results, current_page):
     if current_page > 0:
         keyboard.append(InlineKeyboardButton("⬅️ Previous", callback_data=f"prev_{current_page}"))
     
-    if (current_page + 1) * 5 < len(results):
+    if (current_page + 1) * 25 < len(results):
         keyboard.append(InlineKeyboardButton("Next ➡️", callback_data=f"next_{current_page}"))
     
     return InlineKeyboardMarkup([keyboard]) if keyboard else None
