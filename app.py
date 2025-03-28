@@ -194,7 +194,7 @@ def create_ep_results_message(results, start_idx=0):
 def create_dl_results_message(results):
     print(results)
     message_text = "<b>Download Links:</b>\n\n"
-    for idx, info in enumerate(results, 1):
+    for idx, info in enumerate(len(results)):
         idx=idx
         language = info['language']
         language = language.replace("lang_en", "🇬🇧")
