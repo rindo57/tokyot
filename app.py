@@ -158,6 +158,7 @@ async def start(client: Client, message: Message):
       #  print(equery)
         query = query.replace("&", "/").replace("#", ":").replace("TV", "(TV)").replace("##", ".").replace("&&", ",").replace("=", "!").replace("Movie", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)")
         ep_url = "https://tokyoinsider.com/anime/"+query
+        print(ep_url)
         try:
             results = extract_episode_links(ep_url)
             if not results:
