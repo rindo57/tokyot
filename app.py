@@ -7,6 +7,7 @@ from pyrogram.types import (
     Message,
 )
 import requests
+from base64 import standard_b64encode, standard_b64decode
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, quote
 
@@ -20,6 +21,18 @@ app = Client("anime_search_bot", api_id=api_id, api_hash=api_hash, bot_token=bot
 # Global dictionary to store user search data
 user_data = {}
 
+def b64_to_str(b64: str) -> str:
+    bytes_b64 = b64.encode('ascii')
+    bytes_str = standard_b64decode(bytes_b64)
+    __str = bytes_str.decode('ascii')
+    return __str
+    
+def str_to_b64(__str: str) -> str:
+    str_bytes = __str.encode('ascii')
+    bytes_b64 = standard_b64encode(str_bytes)
+    b64 = bytes_b64.decode('ascii')
+    return b64
+    
 def extract_main_links(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -47,7 +60,10 @@ def create_results_message(results, start_idx=0):
     
     for i in range(start_idx, end_idx):
         title, url = results[i]
-        message_text += f"{i+1}. <a href='{url}'>{title}</a>\n"
+        url = url.replace("https://www.tokyoinsider.com/anime/", "")
+        nurl = str_to_b64(url)
+        xurl = "https://t.me/animeddlbot?start="+nurl
+        message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
     
     return message_text, end_idx
 
@@ -139,7 +155,7 @@ async def handle_pagination(client: Client, callback_query: CallbackQuery):
         message_text,
         reply_markup=reply_markup,
         disable_web_page_preview=True,
-        parse_mode="HTML"
+        parse_mode=enums.ParseMode.HTML
     )
     
     await callback_query.answer()
