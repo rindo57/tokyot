@@ -196,7 +196,7 @@ def create_dl_results_message(results):
     message_text = "<b>Download Links:</b>\n\n"
     for idx, info in enumerate(results, len(results)):
         print(idx)
-        print("r:",len(results)
+        print("r:",len(results))
         language = info['language']
         language = language.replace("lang_en", "🇬🇧")
         download_link = info['download_link']
