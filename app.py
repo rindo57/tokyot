@@ -97,7 +97,7 @@ def create_results_message(results, start_idx=0):
         title, url = results[i]
         url = url.replace("https://www.tokyoinsider.com/anime/", "")
         url = url.replace("https://tokyoinsider.com/anime/", "")
-        nurl = str_to_b64(url)
+        nurl = url.replace("/", "&").replace(":", "#").replace("(TV)", "TV").replace(".", "##").replace(",", "&&").replace("!", "=")
         xurl = "https://t.me/animeddlbot?start="+nurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
     
@@ -152,7 +152,7 @@ async def start(client: Client, message: Message):
             parse_mode=enums.ParseMode.HTML
         )
     else:
-        equery = b64_to_str(query)
+        #equery = b64_to_str(query)
         print(equery)
         ep_url = "https://tokyoinsider.com/anime/"+equery
         try:
