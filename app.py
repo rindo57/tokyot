@@ -253,7 +253,7 @@ async def handle_pagination(client: Client, callback_query: CallbackQuery):
     user_data[user_id]["current_page"] = new_page
     
     # Create new message and buttons based on the prefix
-    start_idx = new_page * 5
+    start_idx = new_page * 25
     if prefix == "ep":
         message_text, _ = create_ep_results_message(results, start_idx)
         reply_markup = create_pagination_buttons_ep(results, new_page)
