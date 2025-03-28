@@ -194,14 +194,12 @@ def create_ep_results_message(results, start_idx=0):
 def create_dl_results_message(results):
     print(results)
     message_text = "<b>Download Links:</b>\n\n"
-    for idx, info in enumerate(results, len(results)):
-        print(idx)
-        print("r:",len(results))
+    for idx, info in enumerate(results, 1):
         language = info['language']
         language = language.replace("lang_en", "🇬🇧")
         download_link = info['download_link']
         download_link = download_link.replace("media.tokyoinsider.com:8080", "f69.ddlserverv1.me.in")
-        message_text= f"<blockquote><a href='{download_link}'><b>{info['title']}</b></a>\n{language} | {info['size']} | {info['added_on']}</blockquote>\n"
+        message_text += f"<blockquote><a href='{download_link}'><b>{info['title']}</b></a>\n{language} | {info['size']} | {info['added_on']}</blockquote>\n"
     return message_text
 
 def create_pagination_buttons(results, current_page):
