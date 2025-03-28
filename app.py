@@ -1,5 +1,5 @@
 import os
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums
 from pyrogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
@@ -69,7 +69,7 @@ async def start(client: Client, message: Message):
         "👋 <b>Hello!</b> I'm an anime search bot.\n\n"
         "Just send me the name of an anime you're looking for, "
         "and I'll search for it on Tokyo Insider!",
-        parse_mode="HTML"
+        parse_mode=enums.ParseMode.HTML
     )
 
 @app.on_message(filters.text & ~filters.command("start"))
@@ -101,7 +101,7 @@ async def search_anime(client: Client, message: Message):
             message_text,
             reply_markup=reply_markup,
             disable_web_page_preview=True,
-            parse_mode="HTML"
+            parse_mode=enums.ParseMode.HTML
         )
         
     except Exception as e:
