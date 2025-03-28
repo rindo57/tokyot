@@ -34,10 +34,6 @@ def str_to_b64(__str: str) -> str:
     return b64
 
 
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-
 def extract_episode_links(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -121,7 +117,7 @@ def create_pagination_buttons(results, current_page):
 @app.on_message(filters.command("start"))
 async def start(client: Client, message: Message):
     query = message.text.split(" ", 1)[-1]
-    if message == "/start":
+    if message.text == "/start":
         await message.reply_text(
             "👋 <b>Hello!</b> I'm an anime search bot.\n\n"
             "Just send me the name of an anime you're looking for, "
