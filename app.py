@@ -234,21 +234,33 @@ async def handle_pagination(client: Client, callback_query: CallbackQuery):
     results = user_data[user_id]["results"]
     current_page = user_data[user_id]["current_page"]
     
-    if data.startswith("next_"):
-        new_page = int(data.split("_")[1]) + 1
-    elif data.startswith("prev_"):
-        new_page = int(data.split("_")[1]) - 1
+    # Determine pagination type
+    if data.startswith("next_") or data.startswith("prev_"):
+        prefix = ""
+    elif data.startswith("epnext_") or data.startswith("epprev_"):
+        prefix = "ep"
     else:
         return await callback_query.answer()
-    
+
+    # Calculate new page
+    try:
+        direction = 1 if data.startswith(f"{prefix}next_") else -1
+        new_page = int(data.split("_")[1]) + direction
+    except (ValueError, IndexError):
+        return await callback_query.answer("Invalid pagination command.")
+
     # Update current page
     user_data[user_id]["current_page"] = new_page
     
-    # Create new message and buttons
+    # Create new message and buttons based on the prefix
     start_idx = new_page * 5
-    message_text, _ = create_results_message(results, start_idx)
-    reply_markup = create_pagination_buttons(results, new_page)
-    
+    if prefix == "ep":
+        message_text, _ = create_ep_results_message(results, start_idx)
+        reply_markup = create_pagination_buttons_ep(results, new_page)
+    else:
+        message_text, _ = create_results_message(results, start_idx)
+        reply_markup = create_pagination_buttons(results, new_page)
+
     # Edit the message with new content
     await callback_query.message.edit_text(
         message_text,
@@ -259,41 +271,6 @@ async def handle_pagination(client: Client, callback_query: CallbackQuery):
     
     await callback_query.answer()
 
-@app.on_callback_query()
-async def handle_pagination_ep(client: Client, callback_query: CallbackQuery):
-    user_id = callback_query.from_user.id
-    data = callback_query.data
-    
-    if user_id not in user_data:
-        return await callback_query.answer("Your search session has expired. Please search again.")
-    
-    results = user_data[user_id]["results"]
-    current_page = user_data[user_id]["current_page"]
-    
-    if data.startswith("epnext_"):
-        new_page = int(data.split("_")[1]) + 1
-    elif data.startswith("epprev_"):
-        new_page = int(data.split("_")[1]) - 1
-    else:
-        return await callback_query.answer()
-    
-    # Update current page
-    user_data[user_id]["current_page"] = new_page
-    
-    # Create new message and buttons
-    start_idx = new_page * 5
-    message_text, _ = create_ep_results_message(results, start_idx)
-    reply_markup = create_pagination_buttons_ep(results, new_page)
-    
-    # Edit the message with new content
-    await callback_query.message.edit_text(
-        message_text,
-        reply_markup=reply_markup,
-        disable_web_page_preview=True,
-        parse_mode=enums.ParseMode.HTML
-    )
-    
-    await callback_query.answer()
 
 if __name__ == "__main__":
     print("Bot started...")
