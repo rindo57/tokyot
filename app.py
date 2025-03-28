@@ -69,13 +69,7 @@ def extract_episode_links(url):
 
     return anime_data
 
-if __name__ == "__main__":
-    search_url = "https://www.tokyoinsider.com/anime/O/One_piece_(TV)/"
-    result_links = extract_main_links(search_url)
 
-    print("\nExtracted Anime Titles & Links:")
-    for title, link in result_links:
-        print(f"{title}: {link}")
 
 
 def extract_main_links(url):
