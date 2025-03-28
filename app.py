@@ -47,7 +47,8 @@ def create_results_message(results, start_idx=0):
     
     for i in range(start_idx, end_idx):
         title, url = results[i]
-        message_text += f"{i+1}. [{title}]({url}))\n"
+        url+=")"
+        message_text += f"{i+1}. [{title}]({url})\n"
     
     return message_text, end_idx
 
