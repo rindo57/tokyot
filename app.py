@@ -95,6 +95,7 @@ def create_results_message(results, start_idx=0):
     
     for i in range(start_idx, end_idx):
         title, url = results[i]
+        url = url.replace("https://www.tokyoinsider.com/anime/", "")
         url = url.replace("https://tokyoinsider.com/anime/", "")
         nurl = str_to_b64(url)
         xurl = "https://t.me/animeddlbot?start="+nurl
@@ -109,6 +110,7 @@ def create_ep_results_message(results, start_idx=0):
     for i in range(start_idx, end_idx):
         title, url = results[i]
         url = url.replace("https://www.tokyoinsider.com/anime/", "")
+        url = url.replace("https://tokyoinsider.com/anime/", "")
         nurl = url.replace("/", "&").replace(":", "#").replace("(TV)", "TV").replace(".", "##").replace(",", "&&").replace("!", "=")
         xurl = "https://t.me/animeddlbot?start="+nurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
