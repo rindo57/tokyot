@@ -66,8 +66,79 @@ def extract_episode_links(url):
     return anime_data
 
 
+def extract_download_links(url):
+    # Send a GET request to the URL
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an error for bad status codes
+    
+    # Parse the HTML content
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Find all download entries (they alternate between c_h2 and c_h2b classes)
+    download_entries = soup.find_all(class_=['c_h2', 'c_h2b'])
+    
+    results = []
+    
+    for entry in download_entries:
+        # Extract title and download link - now we'll specifically get the main link, not the comments link
+        main_div = entry.find('div')  # Get the first div inside the entry
+        download_link_tag = main_div.find('a', href=lambda x: x and not x.endswith('/comment'))
+        
+        if not download_link_tag:
+            continue  # Skip if no download link found
+            
+        title = download_link_tag.text.strip()
+        download_link = download_link_tag['href']
+        
+        # Make sure the link is absolute
+        if not download_link.startswith('http'):
+            download_link = f"https://www.tokyoinsider.com{download_link}"
+        
+        # Extract file info
+        finfo = entry.find(class_='finfo')
+        
+        # Extract language (class of the first span)
+        language_span = finfo.find('span')
+        language = language_span['class'][0] if language_span and language_span.has_attr('class') else "N/A"
+        
+        # Extract size, downloads, uploader, and added date
+        info_text = finfo.get_text(separator='|').split('|')
+        info = [item.strip() for item in info_text if item.strip()]
+        
+        size = "N/A"
+        added_on = "N/A"
+        
+        for i, item in enumerate(info):
+            if item.startswith('Size:'):
+                size = info[i+1] if i+1 < len(info) else "N/A"
+            elif item.startswith('Added On:'):
+                added_on = info[i+1] if i+1 < len(info) else "N/A"
+        
+        results.append({
+            'title': title,
+            'download_link': download_link,
+            'size': size,
+            'language': language,
+            'added_on': added_on
+        })
+    
+    return results
+'''
+# URL to scrape
+url = "https://www.tokyoinsider.com/anime/O/One_Outs_(TV)/episode/20"
 
+# Extract and print the information
+episode_info = extract_episode_info(url)
 
+for idx, info in enumerate(episode_info, 1):
+    print(f"Entry {idx}:")
+    print(f"Title: {info['title']}")
+    print(f"Download Link: {info['download_link']}")
+    print(f"File Size: {info['size']}")
+    print(f"Language: {info['language']}")
+    print(f"Added On: {info['added_on']}")
+    print("-" * 50)
+'''
 def extract_main_links(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -119,6 +190,16 @@ def create_ep_results_message(results, start_idx=0):
     
     return message_text, end_idx
 
+def create_dl_results_message(results):
+    message_text = "<b>Download Links:</b>\n\n"
+    for info in enumerate(results, 1):
+        language = {info['language']}
+        language = language.replace("lang_en", "🇬🇧")
+        download_link = {info['download_link']}
+        download_link = download_link.replace("media.tokyoinsider.com:8080", "f69.ddlserverv1.me.in")
+        message_text= f"<blockquote><a href='{download_link}'><b>{info['title']}</b></a>\n{language} | {info['size']} | {info['added_on']}</blockquote>\n"
+    return message_text
+
 def create_pagination_buttons(results, current_page):
     keyboard = []
     total_pages = (len(results) + 4) // 5  # Calculate total pages (ceil division)
@@ -153,6 +234,24 @@ async def start(client: Client, message: Message):
             "and I'll search for it on Tokyo Insider!",
             parse_mode=enums.ParseMode.HTML
         )
+    elif any(keyword in query for keyword in ["episode", "ova", "movie", "special"]):
+        query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("Movie", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)")
+        dl_url = "https://tokyoinsider.com/anime/"+query
+        try:
+            results = extract_download_links(dl_url)
+            if not results:
+                return await message.reply_text("No results.")
+            message_text = create_dl_results_message(results)
+        
+            await message.reply_text(
+                message_text,
+                disable_web_page_preview=True,
+                parse_mode=enums.ParseMode.HTML
+            )
+        
+        except Exception as e:
+            print(f"Error: {e}")
+            await message.reply_text("An error occurred while fetchong data. Please try again later.")
     else:
         #equery = b64_to_str(query)
       #  print(equery)
