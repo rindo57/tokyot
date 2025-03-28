@@ -114,6 +114,19 @@ def create_ep_results_message(results, start_idx=0):
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
     
     return message_text, end_idx
+
+def create_pagination_buttons(results, current_page):
+    keyboard = []
+    total_pages = (len(results) + 4) // 5  # Calculate total pages (ceil division)
+    
+    if current_page > 0:
+        keyboard.append(InlineKeyboardButton("⬅️ Previous", callback_data=f"prev_{current_page}"))
+    
+    if (current_page + 1) * 5 < len(results):
+        keyboard.append(InlineKeyboardButton("Next ➡️", callback_data=f"next_{current_page}"))
+    
+    return InlineKeyboardMarkup([keyboard]) if keyboard else None
+    
 def create_pagination_buttons_ep(results, current_page):
     keyboard = []
     total_pages = (len(results) + 4) // 5  # Calculate total pages (ceil division)
