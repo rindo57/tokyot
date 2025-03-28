@@ -97,7 +97,7 @@ def create_results_message(results, start_idx=0):
         title, url = results[i]
         url = url.replace("https://www.tokyoinsider.com/anime/", "")
         url = url.replace("https://tokyoinsider.com/anime/", "")
-        nurl = url.replace("/", "&").replace(":", "#").replace("(TV)", "TV").replace(".", "##").replace(",", "&&").replace("!", "=").replace("(Movie)", "Movie").replace("(OVA)", "OVA").replace("(Specials)", "Specials")
+        nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "Movie").replace("(OVA)", "OVA").replace("(Specials)", "Specials")
 
         xurl = "https://t.me/animeddlbot?start="+nurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
@@ -112,7 +112,7 @@ def create_ep_results_message(results, start_idx=0):
         title, url = results[i]
         url = url.replace("https://www.tokyoinsider.com/anime/", "")
         url = url.replace("https://tokyoinsider.com/anime/", "")
-        nurl = url.replace("/", "&").replace(":", "#").replace("(TV)", "TV").replace(".", "##").replace(",", "&&").replace("!", "=").replace("(Movie)", "Movie").replace("(OVA)", "OVA").replace("(Specials)", "Specials")
+        nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "Movie").replace("(OVA)", "OVA").replace("(Specials)", "Specials")
 
         xurl = "https://t.me/animeddlbot?start="+nurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
@@ -156,7 +156,7 @@ async def start(client: Client, message: Message):
     else:
         #equery = b64_to_str(query)
       #  print(equery)
-        query = query.replace("&", "/").replace("#", ":").replace("TV", "(TV)").replace("##", ".").replace("&&", ",").replace("=", "!").replace("Movie", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)")
+        query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("Movie", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)")
         ep_url = "https://tokyoinsider.com/anime/"+query
         print(ep_url)
         try:
