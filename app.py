@@ -171,11 +171,11 @@ def create_results_message(results, start_idx=0):
         url = url.replace("https://tokyoinsider.com/anime/", "")
         nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)","vom")
         nurl = nurl.replace("(","lx").replace(")","rx")                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                               
+        yurl = nurl.replace("=movie", "=m").replace("Movie_1", "1M").replace("Movie_2", "2M").replace("Movie_3", "3M").replace("Movie_4", "4M").replace("Movie_5", "5M").replace("Movie_6", "6M").replace("Movie_7", "7M").replace("Movie_8", "8M").replace("Movie_9", "9M").replace("Movie 10", "10M").replace("Episode_of", "oef")                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                
                                                                                                                                                                                                                                                                
 
-        xurl = "https://t.me/animeddlbot?start="+nurl
+        xurl = "https://t.me/animeddlbot?start="+yurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
     
     return message_text, end_idx
@@ -270,7 +270,9 @@ async def start(client: Client, message: Message):
     else:
         #equery = b64_to_str(query)
       #  print(equery)
-        query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
+        queryx= query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
+        queryz = queryx.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
+      
         ep_url = "https://tokyoinsider.com/anime/"+query
         print(ep_url)
         try:
