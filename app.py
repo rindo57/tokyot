@@ -48,7 +48,15 @@ mapping = {
     "Botsuraku_Yotei_no_Kizoku_dakedo,_Hima_datta_kara_Mahou_wo_Kiwametemita_(TV)": "Botsuraku",
     "Boukensha_ni_Naritai_to_Miyako_ni_Deteitta_Musume_ga_S-Rank_ni_Natteta_(TV)": "Boukensha_ni_Naritai",
     "Buddy_Complex:_Kanketsu-hen_-_Ano_Sora_ni_Kaeru_Mirai_de_(Special)": "Buddy_Complex_Special",
-    "Buta_no_Gotoki_Sanzoku_ni_Torawarete_Shojo_wo_Ubawareru_Kyonyuu_Himekishi___Onna_Senshi_(TV)": "Buta_no_Gotaku"
+    "Buta_no_Gotoki_Sanzoku_ni_Torawarete_Shojo_wo_Ubawareru_Kyonyuu_Himekishi___Onna_Senshi_(TV)": "Buta_no_Gotaku",
+
+    "Cheat_Kusushi_no_Slow_Life:_Isekai_ni_Tsukurou_Drugstore_(TV)": "Cheat_Drugstore",
+    "Chiba_Pedal:_Yowamushi_Pedal_to_Manabu_Jitensha_Koutsuu_Anzen_(ONA)": "Chiba_pedal_Anzen",
+    "Chiisana_Ahiru_no_Ooki_na_Ai_no_Monogatari:_Ahiru_no_Kwak_(TV)": "Chiisana_Ahiru",
+    "Chiisana_Koi_no_Monogatari:_Chichi_to_Sally_Hatsukoi_no_Shiki_(Special)": "Chiisana_Monogatari,
+    "Choujin_Koukousei_tachi_wa_Isekai_demo_Yoyuu_de_Ikinuku_you_desu!_(TV)", "Choujin_Koukousei",
+    "City_Hunter:_Kinkyuu_Namachuukei!__Kyouakuhan_Saeba_Ryou_no_Saigo_(Special)": "City_hunter_Saeba",
+    "Corpse_Party:_Tortured_Souls_-_Bougyakusareta_Tamashii_no_Jukyou_(OVA)": "Corpse_Party_Souls"
 }
 
 mappingrev = {
@@ -67,7 +75,14 @@ mappingrev = {
     "Boukensha_ni_Naritai": "Boukensha_ni_Naritai_to_Miyako_ni_Deteitta_Musume_ga_S-Rank_ni_Natteta_(TV)",
     "Buddy_Complex_Special": "Buddy_Complex:_Kanketsu-hen_-_Ano_Sora_ni_Kaeru_Mirai_de_(Special)",
     "Buta_no_Gotaku": "Buta_no_Gotoki_Sanzoku_ni_Torawarete_Shojo_wo_Ubawareru_Kyonyuu_Himekishi___Onna_Senshi_(TV)",
-    
+
+    "Cheat_Drugstore": "Cheat_Kusushi_no_Slow_Life:_Isekai_ni_Tsukurou_Drugstore_(TV)",
+    "Chiba_pedal_Anzen": "Chiba_Pedal:_Yowamushi_Pedal_to_Manabu_Jitensha_Koutsuu_Anzen_(ONA)",
+    "Chiisana_Ahiru": "Chiisana_Ahiru_no_Ooki_na_Ai_no_Monogatari:_Ahiru_no_Kwak_(TV)",
+    "Chiisana_Monogatari": "Chiisana_Koi_no_Monogatari:_Chichi_to_Sally_Hatsukoi_no_Shiki_(Special)",
+    "Choujin_Koukousei": "Choujin_Koukousei_tachi_wa_Isekai_demo_Yoyuu_de_Ikinuku_you_desu!_(TV)",
+    "City_hunter_Saeba": "City_Hunter:_Kinkyuu_Namachuukei!__Kyouakuhan_Saeba_Ryou_no_Saigo_(Special)",
+    "Corpse_Party_Souls": "Corpse_Party:_Tortured_Souls_-_Bougyakusareta_Tamashii_no_Jukyou_(OVA)" 
 }
     
 def extract_episode_links(url):
