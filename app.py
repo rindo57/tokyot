@@ -199,7 +199,7 @@ def create_ep_results_message(results, start_idx=0):
 
         print("ep nurl: ", iurl)
         
-        xurl = "https://t.me/animeddlbot?start="+yurl
+        xurl = "https://t.me/animeddlbot?start="+iurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
     
     return message_text, end_idx
