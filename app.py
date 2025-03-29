@@ -189,8 +189,9 @@ def create_ep_results_message(results, start_idx=0):
         url = url.replace("https://www.tokyoinsider.com/anime/", "")
         url = url.replace("https://tokyoinsider.com/anime/", "")
         nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)", "vom")
-        nurl = nurl.replace("=movie", "=m")
-        xurl = "https://t.me/animeddlbot?start="+nurl
+        print("ep nurl: ", nurl)
+        yurl = nurl.replace("=movie", "=m")
+        xurl = "https://t.me/animeddlbot?start="+yurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
     
     return message_text, end_idx
