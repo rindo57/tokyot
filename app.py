@@ -33,7 +33,27 @@ def str_to_b64(__str: str) -> str:
     b64 = bytes_b64.decode('ascii')
     return b64
 
+mapping = {
+    "A-Rank_Party_wo_Ridatsu_shita_Ore_wa,_Moto_Oshiego-tachi_to_Meikyuu_Shinbu_wo_Mezasu_(TV)": "A-Rank",
+    "Active_Raid:_Kidou_Kyoushuushitsu_Dai_Hachi_Gakari_2nd_(TV)": "Active_Raid_S2",
+    "Akuyaku_Reijou_Level_99:_Watashi_wa_Ura-Boss_desu_ga_Maou_dewa_Arimasen_(TV)": "Akuyaku_Reijou_Level_99",
+    "Alice_in_the_Country_of_Hearts:_Wonderful_Wonder_World_(Movie)": "Alice_in_the_Country",
+    "Ancien_to_Mahou_no_Tablet:_Mou_Hitotsu_no_Hirune_Hime_(ONA)": "Ancien_to_Mahou",
+    "Ane_Log:_Moyako_Neesan_no_Honpen_wo_Tobidashite_Tomaranai_Monologue_(TV)": "Ane_Log",
+    "Araiso_Private_High_School_Student_Council_Executive_Committee_(OVA)": "Araiso_Private",
+    "Ateuma_Chara_no_Kuse_Shite,_Spadali_Oji_ni_Chouai_Sarete_Imasu_(TV)": "Ateuma_Chara"
+}
 
+mappingrev = {
+    "A=rank": "A-Rank_Party_wo_Ridatsu_shita_Ore_wa,_Moto_Oshiego-tachi_to_Meikyuu_Shinbu_wo_Mezasu_(TV)",
+    "Active_Raid_S2": "Active_Raid:_Kidou_Kyoushuushitsu_Dai_Hachi_Gakari_2nd_(TV)",
+    "Akuyaku_Reijou_Level_99": "Akuyaku_Reijou_Level_99:_Watashi_wa_Ura-Boss_desu_ga_Maou_dewa_Arimasen_(TV)",
+    "Alice_in_the_Country": "Alice_in_the_Country_of_Hearts:_Wonderful_Wonder_World_(Movie)",
+    "Ancien_to_Mahou": "Ancien_to_Mahou_no_Tablet:_Mou_Hitotsu_no_Hirune_Hime_(ONA)",
+    "Ane_Log": "Ane_Log:_Moyako_Neesan_no_Honpen_wo_Tobidashite_Tomaranai_Monologue_(TV)",
+    "Araiso_Private": "Araiso_Private_High_School_Student_Council_Executive_Committee_(OVA)",
+    "Ateuma_Chara": "Ateuma_Chara_no_Kuse_Shite,_Spadali_Oji_ni_Chouai_Sarete_Imasu_(TV)"
+}
     
 def extract_episode_links(url):
     headers = {
@@ -170,7 +190,7 @@ def create_results_message(results, start_idx=0):
         title, url = results[i]
         url = url.replace("https://www.tokyoinsider.com/anime/", "")
         url = url.replace("https://tokyoinsider.com/anime/", "")
-        nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)","vom")
+        nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "xb").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)","vom")
         nurl = nurl.replace("(","lx").replace(")","rx")                                                                                                                                                                                                                                                      
         #movie replace
         yurl = nurl.replace("=movie", "=m").replace("Movie_1", "1M").replace("Movie_2", "2M").replace("Movie_3", "3M").replace("Movie_4", "4M").replace("Movie_5", "5M").replace("Movie_6", "6M").replace("Movie_7", "7M").replace("Movie_8", "8M").replace("Movie_9", "9M").replace("Movie 10", "10M").replace("Episode_of", "oef")                                                                                                                                                                                                                                                     
@@ -190,7 +210,7 @@ def create_ep_results_message(results, start_idx=0):
         title, url = results[i]
         url = url.replace("https://www.tokyoinsider.com/anime/", "")
         url = url.replace("https://tokyoinsider.com/anime/", "")
-        nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)", "vom")
+        nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "xb").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)", "vom")
         nurl=nurl.replace("(","lx").replace(")","rx")
         
         yurl = nurl.replace("=movie", "=m").replace("Movie_1", "1M").replace("Movie_2", "2M").replace("Movie_3", "3M").replace("Movie_4", "4M").replace("Movie_5", "5M").replace("Movie_6", "6M").replace("Movie_7", "7M").replace("Movie_8", "8M").replace("Movie_9", "9M").replace("Movie 10", "10M").replace("Episode_of", "oef")
@@ -250,7 +270,7 @@ async def start(client: Client, message: Message):
             parse_mode=enums.ParseMode.HTML
         )
     elif any(keyword in query for keyword in ["=e", "=ova", "=m", "=special"]):
-        query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
+        query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("xb", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
         query = query.replace("/m", "/movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
         query = query.replace("/e", "/episode").replace("2Z", "2nd Season").replace("3Z", "3rd Season").replace("4Z", "4th Season").replace("5Z", "5th Season").replace("6Z", "6th Season").replace("7Z", "7th Season").replace("8Z", "8th Season").replace("9Z", "9th Season")
 
@@ -274,7 +294,7 @@ async def start(client: Client, message: Message):
     else:
         #equery = b64_to_str(query)
       #  print(equery)
-        query= query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
+        query= query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("xb", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
         query = query.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
         query = query.replace("=e", "=episode").replace("2Z", "2nd Season").replace("3Z", "3rd Season").replace("4Z", "4th Season").replace("5Z", "5th Season").replace("6Z", "6th Season").replace("7Z", "7th Season").replace("8Z", "8th Season").replace("9Z", "9th Season")
         ep_url = "https://tokyoinsider.com/anime/"+query
