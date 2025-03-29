@@ -248,7 +248,7 @@ async def start(client: Client, message: Message):
     elif any(keyword in query for keyword in ["=episode", "=ova", "=m", "=special"]):
         queryx = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
         
-        queryz = queryx.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6")
+        queryz = queryx.replace("/m", "/movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6")
         dl_url = "https://tokyoinsider.com/anime/"+queryz
         print("dl url ", dl_url)
         try:
