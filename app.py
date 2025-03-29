@@ -34,6 +34,7 @@ def str_to_b64(__str: str) -> str:
     return b64
 
 
+    
 def extract_episode_links(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -171,11 +172,12 @@ def create_results_message(results, start_idx=0):
         url = url.replace("https://tokyoinsider.com/anime/", "")
         nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)","vom")
         nurl = nurl.replace("(","lx").replace(")","rx")                                                                                                                                                                                                                                                      
+        #movie replace
         yurl = nurl.replace("=movie", "=m").replace("Movie_1", "1M").replace("Movie_2", "2M").replace("Movie_3", "3M").replace("Movie_4", "4M").replace("Movie_5", "5M").replace("Movie_6", "6M").replace("Movie_7", "7M").replace("Movie_8", "8M").replace("Movie_9", "9M").replace("Movie 10", "10M").replace("Episode_of", "oef")                                                                                                                                                                                                                                                     
-                                                                                                                                                                                                                                                               
-                                                                                                                                                                                                                                                               
+        #season replace                                                                                                                                                                                                                                                        
+        iurl = yurl.replace("=episode", "=e").replace("2nd Season", "2Z").replace("3rd Season", "3Z").replace("4th Season", "4Z").replace("5th Season", "5Z").replace("6th Season", "6Z").replace("7th Season", "7Z").replace("8th Season", "8Z").replace("9th Season", "9Z")                                                                                                                                                                                                                         
 
-        xurl = "https://t.me/animeddlbot?start="+yurl
+        xurl = "https://t.me/animeddlbot?start="+iurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
     
     return message_text, end_idx
@@ -192,10 +194,10 @@ def create_ep_results_message(results, start_idx=0):
         nurl=nurl.replace("(","lx").replace(")","rx")
         
         yurl = nurl.replace("=movie", "=m").replace("Movie_1", "1M").replace("Movie_2", "2M").replace("Movie_3", "3M").replace("Movie_4", "4M").replace("Movie_5", "5M").replace("Movie_6", "6M").replace("Movie_7", "7M").replace("Movie_8", "8M").replace("Movie_9", "9M").replace("Movie 10", "10M").replace("Episode_of", "oef")
-                                                                                                                                                                                                                                                                                     
+        iurl = yurl.replace("=episode", "=e").replace("2nd Season", "2Z").replace("3rd Season", "3Z").replace("4th Season", "4Z").replace("5th Season", "5Z").replace("6th Season", "6Z").replace("7th Season", "7Z").replace("8th Season", "8Z").replace("9th Season", "9Z")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                                                                                                                                                                                                                                                                                     
 
-        print("ep nurl: ", yurl)
+        print("ep nurl: ", iurl)
         
         xurl = "https://t.me/animeddlbot?start="+yurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
@@ -248,9 +250,19 @@ async def start(client: Client, message: Message):
             parse_mode=enums.ParseMode.HTML
         )
     elif any(keyword in query for keyword in ["=episode", "=ova", "=m", "=special"]):
-        queryx = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
-        queryz = queryx.replace("/m", "/movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
-        dl_url = "https://tokyoinsider.com/anime/"+queryz
+        query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
+        query = query.replace("/m", "/movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
+        query = query.replace("/e", "/episode") \
+            .replace("2Z", "2nd Season") \
+            .replace("3Z", "3rd Season") \
+            .replace("4Z", "4th Season") \
+            .replace("5Z", "5th Season") \
+            .replace("6Z", "6th Season") \
+            .replace("7Z", "7th Season") \
+            .replace("8Z", "8th Season") \
+            .replace("9Z", "9th Season")
+
+        dl_url = "https://tokyoinsider.com/anime/"+query
         print("dl url ", dl_url)
         try:
             results = extract_download_links(dl_url)
@@ -270,10 +282,18 @@ async def start(client: Client, message: Message):
     else:
         #equery = b64_to_str(query)
       #  print(equery)
-        queryx= query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
-        queryz = queryx.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
-      
-        ep_url = "https://tokyoinsider.com/anime/"+queryz
+        query= query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
+        query = query.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
+        query = query.replace("/e", "/episode") \
+            .replace("2Z", "2nd Season") \
+            .replace("3Z", "3rd Season") \
+            .replace("4Z", "4th Season") \
+            .replace("5Z", "5th Season") \
+            .replace("6Z", "6th Season") \
+            .replace("7Z", "7th Season") \
+            .replace("8Z", "8th Season") \
+            .replace("9Z", "9th Season")
+        ep_url = "https://tokyoinsider.com/anime/"+query
         print(ep_url)
         try:
             results = extract_episode_links(ep_url)
