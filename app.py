@@ -190,10 +190,10 @@ def create_ep_results_message(results, start_idx=0):
         url = url.replace("https://tokyoinsider.com/anime/", "")
         nurl = url.replace("/", "=").replace(":", "ies").replace("(TV)", "TV").replace(".", "lluf").replace(",", "dsj").replace("!", "wq").replace("(Movie)", "eiv").replace("(OVA)", "OVA").replace("(Specials)", "Specials").replace("(ONA)", "ONA").replace("Kingdom", "gni").replace("(movie)", "vom")
         nurl=nurl.replace("(","lx").replace(")","rx")
-        print("ep nurl: ", nurl)
+        
         yurl = nurl.replace("=movie", "=m").replace("Movie_1", "1M").replace("Movie_2", "2M").replace("Movie_3", "3M").replace("Movie_4", "4M").replace("Movie_5", "5M").replace("Movie_6", "6M")
 
-
+        print("ep nurl: ", yurl)
         
         xurl = "https://t.me/animeddlbot?start="+yurl
         message_text += f"{i+1}. <a href='{xurl}'>{title}</a>\n"
@@ -246,10 +246,11 @@ async def start(client: Client, message: Message):
             parse_mode=enums.ParseMode.HTML
         )
     elif any(keyword in query for keyword in ["=episode", "=ova", "=m", "=special"]):
-        query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
+        queryx = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
         
-        query = query.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6")
-        dl_url = "https://tokyoinsider.com/anime/"+query
+        queryz = queryx.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6")
+        dl_url = "https://tokyoinsider.com/anime/"+queryz
+        print("dl url ", dl_url)
         try:
             results = extract_download_links(dl_url)
             if not results:
