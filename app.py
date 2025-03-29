@@ -276,7 +276,7 @@ async def start(client: Client, message: Message):
       #  print(equery)
         query= query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("lluf", ".").replace("dsj", ",").replace("wq", "!").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
         query = query.replace("=m", "=movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
-        query = query.replace("/e", "/episode").replace("2Z", "2nd Season").replace("3Z", "3rd Season").replace("4Z", "4th Season").replace("5Z", "5th Season").replace("6Z", "6th Season").replace("7Z", "7th Season").replace("8Z", "8th Season").replace("9Z", "9th Season")
+        query = query.replace("=e", "=episode").replace("2Z", "2nd Season").replace("3Z", "3rd Season").replace("4Z", "4th Season").replace("5Z", "5th Season").replace("6Z", "6th Season").replace("7Z", "7th Season").replace("8Z", "8th Season").replace("9Z", "9th Season")
         ep_url = "https://tokyoinsider.com/anime/"+query
         print(ep_url)
         try:
