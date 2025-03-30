@@ -52,7 +52,7 @@ async def get_ouo_shortlink(url):
 async def get_nanolinks_shortlink(url):
     try:
         cfurl = "http://localhost:8191/v1"
-        headers = {"Content-Type": "application/json"}
+        headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
         dataz = {
             "cmd": "request.post",
             "url": f"https://nanolinks.in/api?api=7da8202d8af0c8d76c024a6be6badadaabe66a01&url={url}&format=text",
