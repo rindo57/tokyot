@@ -7,7 +7,43 @@ database = dbclient["tokyo"]
 
 user_data = database['users']
 used_tokens = database['used_tokens']
+verification_tokens = database['verification_tokens']
 
+async def add_verification_token(user_id: int, token: str):
+    """Add a new verification token with expiration"""
+    verification_tokens.insert_one({
+        'user_id': user_id,
+        'token': token,
+        'created_at': datetime.now(),
+        'used': False
+    })
+    return
+
+async def is_valid_verification_token(user_id: int, token: str):
+    """Check if a verification token is valid"""
+    record = verification_tokens.find_one({
+        'user_id': user_id,
+        'token': token,
+        'used': False,
+        'created_at': {'$gt': datetime.now() - timedelta(hours=1)}  # Token expires in 1 hour
+    })
+    return bool(record)
+
+async def mark_token_used(token: str):
+    """Mark a verification token as used"""
+    verification_tokens.update_one(
+        {'token': token},
+        {'$set': {'used': True}}
+    )
+    return
+
+async def cleanup_expired_tokens():
+    """Clean up expired verification tokens"""
+    verification_tokens.delete_many({
+        'created_at': {'$lt': datetime.now() - timedelta(hours=1)}
+    })
+    return
+    
 async def present_user(user_id : int):
     found = user_data.find_one({'_id': user_id})
     return bool(found)
