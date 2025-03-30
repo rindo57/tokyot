@@ -52,36 +52,41 @@ async def get_ouo_shortlink(url):
 async def get_nanolinks_shortlink(url):
     try:
         api_token = "7da8202d8af0c8d76c024a6be6badadaabe66a01"
-        encoded_url = quote(url)
+        encoded_url = quote(url, safe='')
         api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&format=text"
         
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://nanolinks.in/",
+            "Origin": "https://nanolinks.in",
+            "DNT": "1",
             "Connection": "keep-alive",
-            "Upgrade-Insecure-Requests": "1",
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "none",
-            "Sec-Fetch-User": "?1",
-            "Cache-Control": "max-age=0"
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin"
         }
         
-        response = requests.get(api_url, headers=headers, timeout=10)
-        print("Nanolinks API Response:", response.status_code, response.text)
+        # First make a GET request to homepage to get cookies
+        session = requests.Session()
+        homepage = session.get("https://nanolinks.in", headers=headers, timeout=10)
+        homepage.raise_for_status()
+        
+        # Now make the API request with the same session
+        response = session.get(api_url, headers=headers, timeout=10)
+        print(f"Nanolinks Response: {response.status_code} - {response.text}")
         
         response.raise_for_status()
         shortened_url = response.text.strip()
         
-        # Verify the response is actually a URL
         if shortened_url.startswith(('http://', 'https://')):
             return shortened_url
-        return url  # Fallback to original URL if response doesn't contain valid URL
+        return url
+    
     except Exception as e:
-        print(f"Nanolinks Shortener Error: {e}")
-        return url  # Fallback to original URL if shortening fails
+        print(f"Failed to shorten URL: {str(e)}")
+        return url
 '''
 async def get_nanolinks_shortlink(url):
     try:
