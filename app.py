@@ -25,8 +25,8 @@ app = Client("anime_search_bot", api_id=api_id, api_hash=api_hash, bot_token=bot
 user_data = {}
 
 # Shortener APIs
-OUO_API = "http://ouo.press/api/jezWr0hG?s="
-NANOLINKS_API = "https://nanolinks.in/api?api=7da8202d8af0c8d76c02abe66a01&url={}&alias=CustomAlias"
+OUO_API = "https://ouo.press/api/jezWr0hG?s="
+NANOLINKS_API = "https://nanolinks.in/api?api=7da8202d8af0c8d76c024a6be6badadaabe66a01&url={}&alias=CustomAlias"
 
 async def get_ouo_shortlink(url):
     try:
