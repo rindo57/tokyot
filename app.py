@@ -51,6 +51,19 @@ async def get_ouo_shortlink(url):
 
 async def get_nanolinks_shortlink(url):
     try:
+        api_token = "7da8202d8af0c8d76c024a6be6badadaabe66a01"
+        encoded_url = quote(url)
+        api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&format=text"
+        response = requests.get(api_url)
+        print("nano ", response)
+        response.raise_for_status()
+        return response.text.strip()  # Nanolinks returns the shortened URL directly
+    except Exception as e:
+        print(f"Nanolinks Shortener Error: {e}")
+        return url
+'''
+async def get_nanolinks_shortlink(url):
+    try:
         cfurl = "http://localhost:8191/v1"
         headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
         dataz = {
@@ -69,7 +82,7 @@ async def get_nanolinks_shortlink(url):
     except Exception as e:
         print(f"Nanolinks Shortener Error: {e}")
         return url  # Fallback to original URL if shortening fails
-
+'''
 def create_verification_buttons(verification_url):
     keyboard = [
         [
