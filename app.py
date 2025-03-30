@@ -78,8 +78,8 @@ async def send_verification_options(client, message, verification_url):
     # Create buttons with the shortened URLs
     keyboard = [
         [
-            InlineKeyboardButton("OUO (Fast, with ads)", url=ouo_url),
-            InlineKeyboardButton("Nanolinks (Slower, no ads)", url=nano_url)
+            InlineKeyboardButton("OUO (Pop-up ads)", url=ouo_url),
+            InlineKeyboardButton("Nanolinks (No Pop-up ads)", url=nano_url)
         ]
     ]
     
