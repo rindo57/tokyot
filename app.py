@@ -143,7 +143,7 @@ mapping = {
     "Chiba_Pedal:_Yowamushi_Pedal_to_Manabu_Jitensha_Koutsuu_Anzen_(ONA)": "Chiba_pedal_Anzen",
     "Chiisana_Ahiru_no_Ooki_na_Ai_no_Monogatari:_Ahiru_no_Kwak_(TV)": "Chiisana_Ahiru",
     "Chiisana_Koi_no_Monogatari:_Chichi_to_Sally_Hatsukoi_no_Shiki_(Special)": "Chiisana_Monogatari,
-    "Choujin_Koukousei_tachi_wa_Isekai_demo_Yoyuu_de_Ikinuku_you_desu!_(TV)", "Choujin_Koukousei",
+    "Choujin_Koukousei_tachi_wa_Isekai_demo_Yoyuu_de_Ikinuku_you_desu!_(TV)": "Choujin_Koukousei",
     "City_Hunter:_Kinkyuu_Namachuukei!__Kyouakuhan_Saeba_Ryou_no_Saigo_(Special)": "City_hunter_Saeba",
     "Corpse_Party:_Tortured_Souls_-_Bougyakusareta_Tamashii_no_Jukyou_(OVA)": "Corpse_Party_Souls"
 }
