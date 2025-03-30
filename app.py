@@ -474,7 +474,7 @@ async def start(client: Client, message: Message):
             await message.reply_text("An error occurred while fetchong data. Please try again later.")
         
 
-@app.on_message(filters.text & ~filters.command("start"))
+@app.on_message(filters.text & ~filters.command(["start", "myquota"]))
 async def search_anime(client: Client, message: Message):
     user_id = message.from_user.id
     username = message.from_user.username
