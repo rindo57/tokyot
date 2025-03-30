@@ -9,7 +9,7 @@ from pyrogram.types import (
     Message,
 )
 import requests
-from db import add_user, full_userbase, present_user, del_user, update_user_search_count, get_user_data, add_used_token, add_verification_token, mark_user_verified, is_token_used, mark_token_used, cleanup_expired_tokens, is_valid_verification_toke
+from db import add_user, full_userbase, present_user, del_user, update_user_search_count, get_user_data, add_used_token, add_verification_token, mark_user_verified, is_token_used, mark_token_used, cleanup_expired_tokens, is_valid_verification_token
 from base64 import standard_b64encode, standard_b64decode
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, quote
