@@ -59,6 +59,7 @@ async def get_nanolinks_shortlink(url):
             "maxTimeout": 60000
         }
         responsez = requests.post(cfurl, headers=headers, json=dataz)
+        print("nano: ", responsez)
         html_content = responsez.json()['solution']['response']
         soup = BeautifulSoup(html_content, 'html.parser')
         ouurl = soup.body.text.strip()
