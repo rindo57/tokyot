@@ -50,7 +50,6 @@ async def get_ouo_shortlink(url):
         return url  # Fallback to original URL if shortening fails
 
 async def get_nanolinks_shortlink(url):
-async def get_nanolinks_shortlink(url):
     try:
         api_token = "7da8202d8af0c8d76c024a6be6badadaabe66a01"
         encoded_url = quote(url)
