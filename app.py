@@ -160,7 +160,7 @@ async def check_search_limit(user_id):
     verified = user.get('verified', False)
     
     if verified:
-        if search_count >= 10:
+        if search_count >= 15:
             return False
     else:
         if search_count >= 5:
