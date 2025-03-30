@@ -52,7 +52,7 @@ async def get_ouo_shortlink(url):
 async def get_nanolinks_shortlink(url):
     try:
         api_token = "7da8202d8af0c8d76c024a6be6badadaabe66a01"
-        encoded_url = quote(url)
+        encoded_url = url
         api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&format=text"
         response = requests.get(api_url)
         print("nano ", response)
