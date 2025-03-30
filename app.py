@@ -7,6 +7,7 @@ from pyrogram.types import (
     Message,
 )
 import requests
+from db import add_user, full_userbase, present_user, del_user
 from base64 import standard_b64encode, standard_b64decode
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, quote
@@ -292,13 +293,23 @@ def create_pagination_buttons_ep(results, current_page):
 @app.on_message(filters.command("start"))
 async def start(client: Client, message: Message):
     query = message.text.split(" ", 1)[-1]
+    user_id = message.from_user.id
+    username = message.from_user.username
+    uname = f"@{username}"
+    if not await present_user(user_id):
+        try:
+            await add_user(user_id, uname)
+        except:
+            pass
     if message.text == "/start":
+        
         await message.reply_text(
             "👋 <b>Hello!</b> I'm an anime search bot.\n\n"
             "Just send me the name of an anime you're looking for, "
             "and I'll search for it on Tokyo Insider!",
             parse_mode=enums.ParseMode.HTML
         )
+
     elif any(keyword in query for keyword in ["=e", "=ova", "=m", "=special"]):
         query = query.replace("=", "/").replace("ies", ":").replace("TV", "(TV)").replace("xb", ".").replace("dsj", ",").replace("wq", "!").replace("gv","~").replace("lx","(").replace("rx",")").replace("eiv", "(Movie)").replace("OVA", "(OVA)").replace("Specials", "(Specials)").replace("ONA", "(ONA)").replace("gni","Kingdom").replace("vom", "(movie)")
         query = query.replace("/m", "/movie").replace("1M", "Movie_1").replace("2M", "Movie_2").replace("3M", "Movie_3").replace("4M", "Movie_4").replace("5M", "Movie_5").replace("6M", "Movie_6").replace("7M", "Movie_7").replace("8M", "Movie_8").replace("9M", "Movie_9").replace("10M", "Movie 10").replace("oef", "Episode_of")
@@ -441,6 +452,60 @@ async def handle_pagination(client: Client, callback_query: CallbackQuery):
     
     await callback_query.answer()
 
+@app.on_message(filters.command('users') & filters.private & filters.user(int(1425489930)))
+async def get_users(bot, message: Message):
+    msg = await app.send_message(chat_id=message.chat.id, text="`Fetching`")
+    users = await full_userbase()
+    await msg.edit(f"{len(users)} users are using this bot")
+
+@app.on_message(filters.private & filters.command('broadcast') & filters.user(int(1425489930)))
+async def send_text(bot, message: Message):
+    if message.reply_to_message:
+        query = await full_userbase()
+        broadcast_msg = message.reply_to_message
+        total = 0
+        successful = 0
+        blocked = 0
+        deleted = 0
+        unsuccessful = 0
+        repl = message.reply_to_message_id
+        user_id = message.from_user.id
+        jar = await bot.get_messages(user_id, repl)
+        texter = jar.text
+        pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time</i>")
+        for chat_id in query:
+            try:
+                await bot.send_message(chat_id, texter) 
+                successful += 1
+            except FloodWait as e:
+                await asyncio.sleep(e.x)
+                await bot.send_message(chat_id, texter) 
+                successful += 1
+            except UserIsBlocked:
+                await del_user(chat_id)
+                blocked += 1
+            except InputUserDeactivated:
+                await del_user(chat_id)
+                deleted += 1
+            except:
+                unsuccessful += 1
+                pass
+            total += 1
+        
+        status = f"""<b><u>Broadcast Completed</u>
+
+Total Users: <code>{total}</code>
+Successful: <code>{successful}</code>
+Blocked Users: <code>{blocked}</code>
+Deleted Accounts: <code>{deleted}</code>
+Unsuccessful: <code>{unsuccessful}</code></b>"""
+        
+        return await pls_wait.edit(status)
+
+    else:
+        msg = await message.reply(REPLY_ERROR)
+        await asyncio.sleep(8)
+        await msg.delete()
 
 if __name__ == "__main__":
     print("Bot started...")
