@@ -37,7 +37,7 @@ async def get_ouo_shortlink(url):
         headers = {"Content-Type": "application/json"}
         dataz = {
             "cmd": "request.get",
-            "url": f"http://ouo.press/api/jezWr0hG?s={ddlurl}",
+            "url": f"http://ouo.press/api/jezWr0hG?s={url}",
             "maxTimeout": 60000
         }
         responsez = requests.post(cfurl, headers=headers, json=dataz)
@@ -53,7 +53,7 @@ async def get_nanolinks_shortlink(url):
     try:
         api_token = "7da8202d8af0c8d76c024a6be6badadaabe66a01"
         encoded_url = quote(url)
-        api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&alias=CustomAlias&format=text"
+        api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&format=text"
         response = requests.get(api_url)
         response.raise_for_status()
         return response.text.strip()  # Nanolinks returns the shortened URL directly
