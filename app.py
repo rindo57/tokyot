@@ -79,7 +79,7 @@ async def send_verification_options(client, message, verification_url):
         parse_mode=enums.ParseMode.HTML
     )
 
-def generate_verification_token(length=32):
+def generate_verification_token(length=16):
     """Generate a random verification token"""
     alphabet = string.ascii_letters + string.digits
     return ''.join(secrets.choice(alphabet) for _ in range(length))
@@ -512,7 +512,9 @@ async def search_anime(client: Client, message: Message):
     query = message.text.strip()
     if not query:
         return await message.reply_text("Please enter a search query.")
-    
+    user = await get_user_data(user_id)
+    search_count = user.get('search_count', 0) + 1
+    await update_user_search_count(user_id, search_count, user.get('last_reset', datetime.now()))
     # Create search URL
     search_term = quote(query.replace(" ", "_").lower())
     search_url = f"https://www.tokyoinsider.com/anime/search?k={search_term}"
