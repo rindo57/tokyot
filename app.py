@@ -54,7 +54,7 @@ async def get_nanolinks_shortlink(url):
         cfurl = "http://localhost:8191/v1"
         headers = {"Content-Type": "application/json"}
         dataz = {
-            "cmd": "request.get",
+            "cmd": "request.post",
             "url": f"https://nanolinks.in/api?api=7da8202d8af0c8d76c024a6be6badadaabe66a01&url={url}&format=text",
             "maxTimeout": 60000
         }
