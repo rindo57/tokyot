@@ -7,10 +7,12 @@ from pyrogram.types import (
     Message,
 )
 import requests
-from db import add_user, full_userbase, present_user, del_user
+from db import add_user, full_userbase, present_user, del_user, update_user_search_count, get_user_data, add_used_token
 from base64 import standard_b64encode, standard_b64decode
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, quote
+import time
+from datetime import datetime, timedelta
 
 # Bot setup
 api_id = "10247139"  # Get from https://my.telegram.org
@@ -22,6 +24,92 @@ app = Client("anime_search_bot", api_id=api_id, api_hash=api_hash, bot_token=bot
 # Global dictionary to store user search data
 user_data = {}
 
+# Shortener APIs
+OUO_API = "http://ouo.press/api/jezWr0hG?s="
+NANOLINKS_API = "https://nanolinks.in/api?api=7da8202d8af0c8d76c02abe66a01&url={}&alias=CustomAlias"
+
+async def get_ouo_shortlink(url):
+    try:
+        api_url = f"http://ouo.press/api/jezWr0hG?s={url}"
+        response = requests.get(api_url)
+        response.raise_for_status()
+        return response.text.strip()  # OUO returns the shortened URL directly
+    except Exception as e:
+        print(f"OUO Shortener Error: {e}")
+        return url  # Fallback to original URL if shortening fails
+
+async def get_nanolinks_shortlink(url):
+    try:
+        api_token = "7da8202d8af0c8d76c02abe66a01"
+        encoded_url = quote(url)
+        api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&alias=CustomAlias&format=text"
+        response = requests.get(api_url)
+        response.raise_for_status()
+        return response.text.strip()  # Nanolinks returns the shortened URL directly
+    except Exception as e:
+        print(f"Nanolinks Shortener Error: {e}")
+        return url  # Fallback to original URL if shortening fails
+
+def create_verification_buttons(verification_url):
+    keyboard = [
+        [
+            InlineKeyboardButton("OUO (Fast, with ads)", url=verification_url),
+            InlineKeyboardButton("Nanolinks (Slower, no ads)", url=verification_url)
+        ]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+async def send_verification_options(client, message, verification_url):
+    # Get shortened URLs
+    ouo_url = await get_ouo_shortlink(verification_url)
+    nano_url = await get_nanolinks_shortlink(verification_url)
+    
+    # Create buttons with the shortened URLs
+    keyboard = [
+        [
+            InlineKeyboardButton("OUO (Fast, with ads)", url=ouo_url),
+            InlineKeyboardButton("Nanolinks (Slower, no ads)", url=nano_url)
+        ]
+    ]
+    
+    await message.reply_text(
+        "⚠️ <b>You've reached your daily search limit (5 searches)</b>\n\n"
+        "To get more searches (up to 10/day), please verify you're human by completing one of these short links:",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode=enums.ParseMode.HTML
+    )
+
+def generate_verification_token(length=32):
+    """Generate a random verification token"""
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+
+async def check_search_limit(user_id):
+    user = await get_user_data(user_id)
+    if not user:
+        await add_user(user_id, "")
+        return True
+    
+    now = datetime.now()
+    last_reset = user.get('last_reset', datetime(1970, 1, 1))
+    
+    # Reset daily count if it's a new day
+    if (now - last_reset) > timedelta(hours=24):
+        await update_user_search_count(user_id, 0, now)
+        return True
+    
+    search_count = user.get('search_count', 0)
+    verified = user.get('verified', False)
+    
+    if verified:
+        if search_count >= 10:
+            return False
+    else:
+        if search_count >= 5:
+            return False
+    
+    return True
 def b64_to_str(b64: str) -> str:
     bytes_b64 = b64.encode('ascii')
     bytes_str = standard_b64decode(bytes_b64)
@@ -302,11 +390,15 @@ async def start(client: Client, message: Message):
         except:
             pass
     if message.text == "/start":
-        
         await message.reply_text(
             "👋 <b>Hello!</b> I'm an anime search bot.\n\n"
-            "Just send me the name of an anime you're looking for, "
-            "and I'll search for it on Tokyo Insider!",
+            "📌 <b>Available Commands:</b>\n"
+            "/start - Show this message\n"
+            "/myquota - Check your remaining searches\n\n"
+            "<b>Search Limits:</b>\n"
+            "- 5 searches/day for unverified users\n"
+            "- 10 searches/day for verified users\n\n"
+            "Send me an anime name to search!",
             parse_mode=enums.ParseMode.HTML
         )
 
@@ -332,6 +424,21 @@ async def start(client: Client, message: Message):
         except Exception as e:
             print(f"Error: {e}")
             await message.reply_text("An error occurred while fetchong data. Please try again later.")
+    elif query.startswith("verify_"):
+        # Handle verification callback
+        try:
+            target_user_id = int(query.split("_")[1])
+            if target_user_id == user_id:
+                await mark_user_verified(user_id)
+                await message.reply_text(
+                    "✅ <b>Verification successful!</b>\n\n"
+                    "You now have 10 daily searches available.",
+                    parse_mode=enums.ParseMode.HTML
+                )
+            else:
+                await message.reply_text("This verification link is not for you.")
+        except:
+            await message.reply_text("Invalid verification link.")
     else:
         #equery = b64_to_str(query)
       #  print(equery)
@@ -369,6 +476,39 @@ async def start(client: Client, message: Message):
 
 @app.on_message(filters.text & ~filters.command("start"))
 async def search_anime(client: Client, message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username
+    uname = f"@{username}" if username else str(user_id)
+    
+    if not await present_user(user_id):
+        try:
+            await add_user(user_id, uname)
+        except:
+            pass
+    
+    # Check search limit
+    can_search = await check_search_limit(user_id)
+    if not can_search:
+        user = await get_user_data(user_id)
+        verified = user.get('verified', False)
+        
+        if not verified:
+            # Generate a unique verification token
+            token = generate_verification_token()
+            await add_verification_token(user_id, token)
+            
+            # Create verification URL with token
+            verification_url = f"https://t.me/{client.me.username}?start=verify_{user_id}_{token}"
+            
+            # Send verification options with shortened links
+            await send_verification_options(client, message, verification_url)
+        else:
+            await message.reply_text(
+                "⚠️ <b>You've reached your daily search limit (10 searches)</b>\n\n"
+                "Please try again tomorrow.",
+                parse_mode=enums.ParseMode.HTML
+            )
+        return
     query = message.text.strip()
     if not query:
         return await message.reply_text("Please enter a search query.")
@@ -507,6 +647,42 @@ Unsuccessful: <code>{unsuccessful}</code></b>"""
         await asyncio.sleep(8)
         await msg.delete()
 
+# Add this with your other command handlers
+@app.on_message(filters.command("myquota"))
+async def show_quota(client: Client, message: Message):
+    user_id = message.from_user.id
+    
+    if not await present_user(user_id):
+        await message.reply_text("You haven't started using the bot yet. Send any message to begin.")
+        return
+    
+    user = await get_user_data(user_id)
+    now = datetime.now()
+    last_reset = user.get('last_reset', datetime(1970, 1, 1))
+    
+    # Check if we need to reset the count (24 hours passed)
+    if (now - last_reset) > timedelta(hours=24):
+        await update_user_search_count(user_id, 0, now)
+        user['search_count'] = 0
+        user['last_reset'] = now
+    
+    search_count = user.get('search_count', 0)
+    verified = user.get('verified', False)
+    max_searches = 10 if verified else 5
+    remaining = max(0, max_searches - search_count)
+    
+    reset_time = last_reset + timedelta(hours=24)
+    hours_until_reset = (reset_time - now).seconds // 3600
+    
+    await message.reply_text(
+        f"🔍 <b>Your Search Quota</b>\n\n"
+        f"• Searches used today: {search_count}/{max_searches}\n"
+        f"• Remaining searches: {remaining}\n"
+        f"• Account type: {'✅ Verified' if verified else '❌ Unverified'}\n"
+        f"• Quota resets in: {hours_until_reset} hours\n\n"
+        f"{'⚠️ Verify to get 10 daily searches' if not verified else ''}",
+        parse_mode=enums.ParseMode.HTML
+    )
 if __name__ == "__main__":
     print("Bot started...")
     app.run()
