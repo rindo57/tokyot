@@ -50,17 +50,39 @@ async def get_ouo_shortlink(url):
         return url  # Fallback to original URL if shortening fails
 
 async def get_nanolinks_shortlink(url):
+async def get_nanolinks_shortlink(url):
     try:
         api_token = "7da8202d8af0c8d76c024a6be6badadaabe66a01"
-        encoded_url = url
+        encoded_url = quote(url)
         api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&format=text"
-        response = requests.get(api_url)
-        print("nano ", response)
+        
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-User": "?1",
+            "Cache-Control": "max-age=0"
+        }
+        
+        response = requests.get(api_url, headers=headers, timeout=10)
+        print("Nanolinks API Response:", response.status_code, response.text)
+        
         response.raise_for_status()
-        return response.text.strip()  # Nanolinks returns the shortened URL directly
+        shortened_url = response.text.strip()
+        
+        # Verify the response is actually a URL
+        if shortened_url.startswith(('http://', 'https://')):
+            return shortened_url
+        return url  # Fallback to original URL if response doesn't contain valid URL
     except Exception as e:
         print(f"Nanolinks Shortener Error: {e}")
-        return url
+        return url  # Fallback to original URL if shortening fails
 '''
 async def get_nanolinks_shortlink(url):
     try:
