@@ -51,12 +51,20 @@ async def get_ouo_shortlink(url):
 
 async def get_nanolinks_shortlink(url):
     try:
-        api_token = "7da8202d8af0c8d76c024a6be6badadaabe66a01"
-        encoded_url = quote(url)
-        api_url = f"https://nanolinks.in/api?api={api_token}&url={encoded_url}&format=text"
-        response = requests.get(api_url)
-        response.raise_for_status()
-        return response.text.strip()  # Nanolinks returns the shortened URL directly
+        cfurl = "http://localhost:8191/v1"
+        headers = {"Content-Type": "application/json"}
+        dataz = {
+            "cmd": "request.get",
+            "url": f"https://nanolinks.in/api?api=7da8202d8af0c8d76c024a6be6badadaabe66a01&url={url}&format=text",
+            "maxTimeout": 60000
+        }
+        responsez = requests.post(cfurl, headers=headers, json=dataz)
+        html_content = responsez.json()['solution']['response']
+        soup = BeautifulSoup(html_content, 'html.parser')
+        ouurl = soup.body.text.strip()
+        return nanurl
+    
+        return nanurl  # Nanolinks returns the shortened URL directly
     except Exception as e:
         print(f"Nanolinks Shortener Error: {e}")
         return url  # Fallback to original URL if shortening fails
@@ -681,7 +689,7 @@ async def show_quota(client: Client, message: Message):
     
     search_count = user.get('search_count', 0)
     verified = user.get('verified', False)
-    max_searches = 10 if verified else 5
+    max_searches = 15 if verified else 5
     remaining = max(0, max_searches - search_count)
     
     reset_time = last_reset + timedelta(hours=24)
